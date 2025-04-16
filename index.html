@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Taniya ❤️</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to top right, #ffecd2 0%, #fcb69f 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Comic Sans MS', cursive;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ff007f;
+      margin: 20px 20px 10px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    img {
+      width: 300px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      max-width: 90vw;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    #yesBtn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #noBtn {
+      background-color: #f44336;
+      color: white;
+      position: relative;
+      z-index: 3;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 1.4rem;
+      color: #d63384;
+      max-width: 90vw;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 1;
+    }
+
+    #message.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        padding: 0 10px;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 12px 24px;
+      }
+
+      #message {
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Music -->
+  <audio id="bgMusic" loop>
+    <source src="bgmusic.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <h1>TANIYA IS THE MOST BEAUTIFUL GIRL SIDDIQ HAS EVER MET?❤️</h1>
+
+  <img src="taniya.jpg" alt="Taniya ❤️">
+
+  <div class="buttons">
+    <button id="yesBtn">YES</button>
+    <button id="noBtn">NO</button>
+  </div>
+
+  <div id="message">
+    🎉 Congratulations! You are absolutely correct!<br>
+    Taniya is, in fact, the most beautiful girl ever 💕💫🌟🌸
+  </div>
+
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    // Audio autoplay workaround
+    const bgMusic = document.getElementById('bgMusic');
+    document.addEventListener('click', () => {
+      bgMusic.play().catch(e => console.log('Autoplay prevented'));
+    }, { once: true });
+
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const message = document.getElementById('message');
+
+    let hasMoved = false;
+
+    noBtn.addEventListener('mouseover', () => {
+      if (!hasMoved) {
+        noBtn.style.position = 'fixed';
+        hasMoved = true;
+      }
+
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    });
+
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    class Firework {
+      constructor() {
+        this.x = random(0, canvas.width);
+        this.y = random(0, canvas.height / 2);
+        this.radius = 0;
+        this.maxRadius = random(30, 80);
+        this.alpha = 1;
+        this.color = `hsl(${random(0, 360)}, 100%, 50%)`;
+      }
+
+      draw() {
+        if (this.alpha <= 0) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      update() {
+        this.radius += 2;
+        this.alpha -= 0.03;
+      }
+    }
+
+    let fireworks = [];
+
+    yesBtn.addEventListener('click', () => {
+      message.classList.add('show');
+      for (let i = 0; i < 80; i++) {
+        fireworks.push(new Firework());
+      }
+    });
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      fireworks.forEach((fw, index) => {
+        fw.update();
+        fw.draw();
+        if (fw.alpha <= 0) {
+          fireworks.splice(index, 1);
+        }
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
+</body>
+</html>
